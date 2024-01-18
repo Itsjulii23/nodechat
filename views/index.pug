@@ -1,0 +1,46 @@
+extends layout
+
+block content
+  h1= title
+  h2#numClientes 
+
+  p Welcome to #{title}
+  ul#mensajes
+
+  div
+    label Usuario
+    input#inputUsuario(type='text')
+  p
+  div
+    label Mensaje
+    input#inputMensaje(type='text')
+  p
+    button#btnMensaje Enviar 
+
+  script(src='/socket.io/socket.io.js')
+  script. 
+    const socket = io();
+    const inputUsuario = document.getElementById('inputUsuario');
+    const inputMensaje = document.getElementById('inputMensaje');
+    const btnEnviar = document.getElementById('btnMensaje');
+    const mensajes = document.getElementById('mensajes');
+    cosnt numClientes=document.getElementById('numClientes');
+
+    socket.on('mensaje', (data) => {
+      const li = document.createElement('li');
+      li.innerText = `${data.usuario}: ${data.mensaje}`;
+      mensajes.append(li);
+    });q
+
+    btnEnviar.addEventListener('click', () => {
+      socket.emit('mensaje', {
+        usuario: inputUsuario.value,
+        mensaje: inputMensaje.value
+      });
+
+    
+    });
+
+    socket.on('num_clientes',num => {
+      numClientes.innerText=`Clientes Conectados: ${num}`;
+    });
